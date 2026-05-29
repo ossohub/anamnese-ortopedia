@@ -107,7 +107,35 @@ textarea.flash{border-color:var(--vd)!important;box-shadow:0 0 0 3px rgba(46,155
 #toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(30px);background:#1C2B3A;color:#fff;padding:.65rem 1.3rem;border-radius:8px;font-size:.84rem;font-weight:600;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;z-index:999;white-space:nowrap}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 footer{text-align:center;padding:1.5rem 1rem;font-size:.72rem;color:var(--sx);border-top:1px solid var(--bd);margin-top:1rem}
+
+/* LOGIN SCREEN */
+#login-screen{position:fixed;inset:0;background:linear-gradient(135deg,#0D4F8C,#1A6EBD,#2E9B7A);display:flex;align-items:center;justify-content:center;z-index:9999}
+.login-card{background:#fff;border-radius:18px;padding:2.5rem 2rem;max-width:380px;width:90%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+.login-logo{width:64px;height:64px;background:linear-gradient(135deg,#EBF4FC,#EBF7F3);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 1.25rem}
+.login-title{font-size:1.2rem;font-weight:800;color:#1C2B3A;margin-bottom:.35rem}
+.login-sub{font-size:.82rem;color:#607D8B;margin-bottom:1.75rem;line-height:1.5}
+.btn-google{width:100%;display:flex;align-items:center;justify-content:center;gap:.75rem;padding:.75rem 1.25rem;border:2px solid #E0E8EF;border-radius:10px;background:#fff;cursor:pointer;font-size:.9rem;font-weight:700;color:#1C2B3A;transition:all .2s;font-family:inherit}
+.btn-google:hover{border-color:#1A6EBD;background:#EBF4FC;transform:translateY(-1px);box-shadow:0 4px 12px rgba(26,110,189,.15)}
+.btn-google img{width:22px;height:22px}
+.login-footer{font-size:.7rem;color:#90A4AE;margin-top:1.25rem;line-height:1.5}
+/* USER INFO NO HEADER */
+.hdr-user{display:flex;align-items:center;gap:.6rem;margin-left:auto}
+.hdr-avatar{width:32px;height:32px;border-radius:50%;border:2px solid rgba(255,255,255,.4);object-fit:cover}
+.hdr-name{font-size:.78rem;color:rgba(255,255,255,.9);font-weight:600;max-width:130px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.btn-logout{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;border-radius:6px;padding:.3rem .65rem;font-size:.72rem;font-weight:700;cursor:pointer;font-family:inherit;transition:background .2s}
+.btn-logout:hover{background:rgba(255,255,255,.28)}
+/* SYNC STATUS */
+.sync-dot{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:.3rem}
+.sync-ok{background:#2E9B7A}.sync-saving{background:#E67E22}.sync-err{background:#C0392B}
+.img-saved-badge{font-size:.68rem;color:#2E9B7A;font-weight:700;margin-top:.3rem;display:none}
+/* FIREBASE NOT CONFIGURED WARNING */
+.firebase-warn{background:#FEF9EB;border:1.5px solid #F5C97A;border-radius:8px;padding:.75rem 1rem;font-size:.78rem;color:#7D4E00;margin-bottom:1rem;line-height:1.5;display:none}
 </style>
+
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
 
@@ -137,6 +165,26 @@ footer{text-align:center;padding:1.5rem 1rem;font-size:.72rem;color:var(--sx);bo
   <symbol id="i-img" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></symbol>
 </svg>
 
+
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">
+      <svg width="34" height="34" fill="none" stroke="#1A6EBD" stroke-width="2" viewBox="0 0 24 24">
+        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/>
+        <circle cx="6.5" cy="17.5" r="1.5" fill="#1A6EBD" stroke="none"/>
+        <circle cx="17.5" cy="6.5" r="1.5" fill="#1A6EBD" stroke="none"/>
+      </svg>
+    </div>
+    <h2 class="login-title">Anamnese Ortopédica</h2>
+    <p class="login-sub">Faça login com sua conta Google para acessar sua área personalizada e salvar suas classificações.</p>
+    <button class="btn-google" onclick="loginGoogle()">
+      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google"/>
+      Entrar com Google
+    </button>
+    <p class="login-footer">Suas imagens e preferências ficam salvas na nuvem.<br/>Acesse de qualquer dispositivo.</p>
+  </div>
+</div>
+
 <div class="hdr">
   <div class="hdr-ico">
     <svg width="22" height="22" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><use href="#i-bone"/></svg>
@@ -144,6 +192,11 @@ footer{text-align:center;padding:1.5rem 1rem;font-size:.72rem;color:var(--sx);bo
   <div>
     <h1>Anamnese — Ortopedia e Traumatologia</h1>
     <p>Formulário clínico estruturado · Classificações internacionais por região anatômica</p>
+  </div>
+  <div class="hdr-user" id="hdr-user" style="display:none">
+    <img id="hdr-avatar" class="hdr-avatar" src="" alt=""/>
+    <span id="hdr-name" class="hdr-name"></span>
+    <button class="btn-logout" onclick="logout()">Sair</button>
   </div>
 </div>
 
@@ -1912,17 +1965,66 @@ footer{text-align:center;padding:1.5rem 1rem;font-size:.72rem;color:var(--sx);bo
 <footer>Anamnese Ortopédica · Fontes: CLASSIFICAÇÕES de TUDO 2, Manual de Trauma Ortopédico (SBOT 2011), Manual Ilustrado do Exame Ortopédico (UNIVILLE 2021), DOT-UNIFESP · Uso clínico educacional</footer>
 
 <script>
-/**
- * anamnese.js — Módulo de Anamnese Ortopédica
- * Exporta dados clínicos (chips, classificações) e funções utilitárias.
- * Compatível com Node.js (require/import) e navegador (ES Module).
- *
- * Fontes: CLASSIFICAÇÕES de TUDO 2, Manual de Trauma Ortopédico (SBOT 2011),
- *         Manual Ilustrado do Exame Ortopédico (UNIVILLE 2021), DOT-UNIFESP
- */
-
 'use strict';
 
+/* ── FIREBASE CONFIG — substitua pelos seus valores ── */
+const FIREBASE_CONFIG = {
+  apiKey:            "AIzaSyA-y6ul2utVnPUp2i4HwxTpQeU9CJsEoB8",
+  authDomain:        "ossohub-29c29.firebaseapp.com",
+  projectId:         "ossohub-29c29",
+  storageBucket:     "ossohub-29c29.firebasestorage.app",
+  messagingSenderId: "658466061048",
+  appId:             "1:658466061048:web:44c875a45706279864d90d"
+};
+
+/* ── FIREBASE INIT ── */
+let db = null, auth = null, currentUser = null;
+const fbConfigured = !FIREBASE_CONFIG.apiKey.includes('COLE_AQUI');
+
+if (fbConfigured) {
+  firebase.initializeApp(FIREBASE_CONFIG);
+  auth = firebase.auth();
+  db   = firebase.firestore();
+
+  auth.onAuthStateChanged(user => {
+    if (user) {
+      currentUser = user;
+      showApp(user);
+      carregarImagensUsuario();
+    } else {
+      currentUser = null;
+      document.getElementById('login-screen').style.display = 'flex';
+      document.getElementById('hdr-user').style.display = 'none';
+    }
+  });
+} else {
+  // Firebase não configurado — modo local (sem login, localStorage)
+  document.getElementById('login-screen').style.display = 'none';
+  const warn = document.getElementById('firebase-warn');
+  if (warn) warn.style.display = 'block';
+  setTimeout(() => inicializarApp(), 100);
+}
+
+function showApp(user) {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('hdr-user').style.display = 'flex';
+  document.getElementById('hdr-avatar').src = user.photoURL || '';
+  document.getElementById('hdr-name').textContent = user.displayName || user.email;
+  inicializarApp();
+}
+
+function loginGoogle() {
+  const provider = new firebase.auth.GoogleAuthProvider();
+  auth.signInWithPopup(provider).catch(err => {
+    alert('Erro ao fazer login: ' + err.message);
+  });
+}
+
+function logout() {
+  if (confirm('Deseja sair?')) auth.signOut();
+}
+
+/* ── CHIPS DATA ── */
 const CS = {
   qp: ['Dor localizada em ___', 'Dor difusa no membro ___', 'Trauma (queda / colisão / torção)', 'Dor após esforço / atividade', 'Dor em repouso e à noite', 'Inchaço / edema articular', 'Limitação de movimento', 'Deformidade progressiva', 'Instabilidade / "falseio"', 'Crepitação ao movimento', 'Dormência / formigamento', 'Fraqueza muscular em ___', 'Dificuldade de deambular', 'Bloqueio articular', 'Perda de força na preensão'],
   hma: ['Início súbito (trauma)', 'Início insidioso / gradual', 'EVA: ___/10 em repouso', 'EVA: ___/10 em movimento', 'Localização: ___', 'Irradiação para ___', 'Piora com carga / deambulação', 'Piora com rotação / torção', 'Melhora com repouso', 'Melhora com analgésico / gelo', 'Mecanismo: torção em valgo', 'Mecanismo: queda sobre o membro', 'Mecanismo: impacto direto', 'Imobilizado com tala/gesso (data: ___)', 'Tratamento fisioterápico em curso', 'Infiltração prévia (data: ___)'],
@@ -1933,7 +2035,7 @@ const CS = {
   obs: ['Rx disponível (data: ___)', 'TC disponível (data: ___)', 'RM disponível (data: ___)', 'ADM ativa: Flexão ___° / Ext ___°', 'ADM passiva preservada', 'Força MRC 5/5 proximal / distal', 'Força MRC ___/5 em ___', 'Lachman: positivo / negativo', 'Gaveta anterior/posterior: ___', 'McMurray: positivo em ___', 'Varo / valgo stress: ___', 'Neer e Hawkins: positivo', 'Jobe (arco doloroso): positivo', 'KL grau ___ (Kellgren-Lawrence)', 'Espaço articular: preservado / reduzido', 'Alinhamento: varo / valgo / neutro', 'Kellgren-Lawrence aplicar →', 'Gustilo tipo ___ (se fratura exposta)', 'Garden ___ (se fratura colo fêmur)', 'AO/OTA: ___']
 };
 
-/* ── FUNÇÕES ANAMNESE ── */
+/* ── FUNÇÕES CHIPS ── */
 function popularChips(painelId, textos, targetId){
   const p = document.getElementById(painelId);
   if(!p) return;
@@ -1954,6 +2056,8 @@ function adicionarChip(targetId, texto){
   setTimeout(()=>ta.classList.remove('flash'),600);
   ta.scrollTop = ta.scrollHeight; ta.focus();
 }
+
+/* ── TABS ── */
 function showTab(tab){
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
@@ -1962,13 +2066,11 @@ function showTab(tab){
 }
 function toggleCard(hdr){ hdr.parentElement.classList.toggle('open'); }
 
-/* ── FUNÇÕES CLASSIFICAÇÕES ── */
+/* ── CLASSIFICAÇÕES ── */
 let currentRegion = 'geral';
-let searchActive = false;
 
 function selectRegion(region){
   currentRegion = region;
-  searchActive = false;
   document.getElementById('cl-filter').value = '';
   document.querySelectorAll('.region-btn').forEach(b => {
     b.classList.toggle('active', b.dataset.region === region);
@@ -1976,72 +2078,129 @@ function selectRegion(region){
   document.querySelectorAll('.region-section').forEach(s => {
     s.style.display = s.id === 'region-'+region ? 'block' : 'none';
   });
-  // Show all cards in selected region
   document.querySelectorAll('#region-'+region+' .cl-card').forEach(c => c.style.display='');
 }
 
 function filtrarClassif(){
   const q = document.getElementById('cl-filter').value.toLowerCase().trim();
-  if(!q){
-    selectRegion(currentRegion);
-    return;
-  }
-  searchActive = true;
-  // Show all regions
+  if(!q){ selectRegion(currentRegion); return; }
   document.querySelectorAll('.region-section').forEach(s => s.style.display = 'block');
   document.querySelectorAll('.region-btn').forEach(b => b.classList.remove('active'));
-  // Filter cards
-  let total = 0;
   document.querySelectorAll('.cl-card').forEach(c => {
-    const match = c.textContent.toLowerCase().includes(q);
-    c.style.display = match ? '' : 'none';
-    if(match) total++;
+    c.style.display = c.textContent.toLowerCase().includes(q) ? '' : 'none';
   });
-  // Hide empty regions
   document.querySelectorAll('.region-section').forEach(s => {
-    const visible = [...s.querySelectorAll('.cl-card')].some(c=>c.style.display!=='none');
-    s.style.display = visible ? 'block' : 'none';
+    const vis = [...s.querySelectorAll('.cl-card')].some(c=>c.style.display!=='none');
+    s.style.display = vis ? 'block' : 'none';
   });
 }
 
-/* ── IMAGENS ── */
+/* ── IMAGENS — Firebase Firestore ── */
 function triggerUpload(id){
   document.getElementById('file-'+id).click();
 }
+
 function loadImg(id, input){
   const file = input.files[0];
   if(!file) return;
+  // Resize/compress before saving
   const reader = new FileReader();
   reader.onload = e => {
-    document.getElementById('imgel-'+id).src = e.target.result;
-    document.getElementById('preview-'+id).style.display = 'block';
-    document.getElementById('img-'+id).querySelector('.img-placeholder').style.display = 'none';
-    // Persist in localStorage
-    try { localStorage.setItem('img-'+id, e.target.result); } catch(err){}
+    const original = e.target.result;
+    comprimirImagem(original, 900, (compressed) => {
+      exibirImagem(id, compressed);
+      salvarImagemUsuario(id, compressed);
+    });
   };
   reader.readAsDataURL(file);
 }
-function removeImg(id){
-  document.getElementById('imgel-'+id).src = '';
-  document.getElementById('preview-'+id).style.display = 'none';
-  document.getElementById('img-'+id).querySelector('.img-placeholder').style.display = 'flex';
-  document.getElementById('file-'+id).value = '';
-  try { localStorage.removeItem('img-'+id); } catch(err){}
+
+function comprimirImagem(dataUrl, maxWidth, callback){
+  const img = new Image();
+  img.onload = () => {
+    const canvas = document.createElement('canvas');
+    let w = img.width, h = img.height;
+    if(w > maxWidth){ h = Math.round(h * maxWidth / w); w = maxWidth; }
+    canvas.width = w; canvas.height = h;
+    canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+    callback(canvas.toDataURL('image/jpeg', 0.82));
+  };
+  img.src = dataUrl;
 }
+
+function exibirImagem(id, src){
+  const imgEl    = document.getElementById('imgel-'+id);
+  const preview  = document.getElementById('preview-'+id);
+  const ph       = document.getElementById('img-'+id)?.querySelector('.img-placeholder');
+  if(imgEl){ imgEl.src = src; }
+  if(preview){ preview.style.display = 'block'; }
+  if(ph){ ph.style.display = 'none'; }
+}
+
+function removeImg(id){
+  const imgEl   = document.getElementById('imgel-'+id);
+  const preview = document.getElementById('preview-'+id);
+  const ph      = document.getElementById('img-'+id)?.querySelector('.img-placeholder');
+  if(imgEl){ imgEl.src=''; }
+  if(preview){ preview.style.display='none'; }
+  if(ph){ ph.style.display='flex'; }
+  document.getElementById('file-'+id).value = '';
+  deletarImagemUsuario(id);
+}
+
+async function salvarImagemUsuario(id, dataUrl){
+  if(fbConfigured && currentUser && db){
+    try{
+      await db.collection('users').doc(currentUser.uid)
+              .collection('images').doc(id)
+              .set({ data: dataUrl, updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
+      mostrarToast('Imagem salva na sua conta!');
+    } catch(err){
+      console.error('Erro ao salvar imagem:', err);
+      salvarLocal(id, dataUrl);
+    }
+  } else {
+    salvarLocal(id, dataUrl);
+  }
+}
+
+async function deletarImagemUsuario(id){
+  if(fbConfigured && currentUser && db){
+    try{
+      await db.collection('users').doc(currentUser.uid)
+              .collection('images').doc(id).delete();
+    } catch(err){ console.error(err); }
+  } else {
+    try{ localStorage.removeItem('img-'+id); } catch(e){}
+  }
+}
+
+async function carregarImagensUsuario(){
+  if(!fbConfigured || !currentUser || !db) return;
+  try{
+    const snap = await db.collection('users').doc(currentUser.uid)
+                         .collection('images').get();
+    snap.forEach(doc => {
+      exibirImagem(doc.id, doc.data().data);
+    });
+  } catch(err){ console.error('Erro ao carregar imagens:', err); }
+}
+
+function salvarLocal(id, dataUrl){
+  try{ localStorage.setItem('img-'+id, dataUrl); } catch(e){}
+}
+
 function restoreImages(){
-  try {
+  // Only used in offline/unconfigured mode
+  if(fbConfigured) return;
+  try{
     for(let i=0; i<localStorage.length; i++){
       const key = localStorage.key(i);
       if(key && key.startsWith('img-')){
-        const id = key.substring(4);
-        const src = localStorage.getItem(key);
-        const imgEl = document.getElementById('imgel-'+id);
-        const preview = document.getElementById('preview-'+id);
-        const placeholder = document.getElementById('img-'+id)?.querySelector('.img-placeholder');
-        if(imgEl && src){ imgEl.src=src; preview.style.display='block'; if(placeholder) placeholder.style.display='none'; }
+        exibirImagem(key.substring(4), localStorage.getItem(key));
       }
     }
-  } catch(err){}
+  } catch(e){}
 }
 
 /* ── EXPORTAR / LIMPAR ── */
@@ -2053,29 +2212,28 @@ function limpar(){
   const sexo=document.getElementById('sexo'); if(sexo) sexo.value='';
   mostrarToast('Campos limpos.');
 }
+
 function exportar(){
   const now=new Date(), data=now.toLocaleDateString('pt-BR'), hora=now.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
-  const pac=[document.getElementById('nome').value, document.getElementById('idade').value?(document.getElementById('idade').value+' anos'):'', document.getElementById('sexo').value, document.getElementById('prof').value, document.getElementById('proc').value].filter(Boolean).join(' | ');
+  const pac=[document.getElementById('nome').value,document.getElementById('idade').value?(document.getElementById('idade').value+' anos'):'',document.getElementById('sexo').value,document.getElementById('prof').value,document.getElementById('proc').value].filter(Boolean).join(' | ');
   const campos=[['IDENTIFICAÇÃO DO PACIENTE',pac],['QUEIXA PRINCIPAL',document.getElementById('qp').value],['HISTÓRIA DA MOLÉSTIA ATUAL (HMA)',document.getElementById('hma').value],['HISTÓRIA PATOLÓGICA PREGRESSA (HPP)',document.getElementById('hpp').value],['HISTÓRIA FAMILIAR',document.getElementById('hfam').value],['HISTÓRIA SOCIAL E HÁBITOS',document.getElementById('hsoc').value],['INTERROGATÓRIO SINTOMATOLÓGICO',document.getElementById('interr').value],['ACHADOS ORTOPÉDICOS ESPECÍFICOS',document.getElementById('obs').value]];
-  let txt = `ANAMNESE ORTOPÉDICA — Ortopedia e Traumatologia\nData: ${data}  |  Hora: ${hora}\n\n`;
-  campos.forEach(([t,v]) => {
-    const valor = (v || '(não preenchido)').trim();
-    txt += `${t}:\n${valor}\n\n`;
-  });
-  txt = txt.trimEnd() + '\n';
+  let txt=`ANAMNESE ORTOPÉDICA — Ortopedia e Traumatologia\nData: ${data}  |  Hora: ${hora}\n\n`;
+  campos.forEach(([t,v])=>{ txt+=`${t}:\n${(v||'(não preenchido)').trim()}\n\n`; });
+  txt=txt.trimEnd()+'\n';
   const blob=new Blob([txt],{type:'text/plain;charset=utf-8'});
-  const url=URL.createObjectURL(blob), a=document.createElement('a');
+  const url=URL.createObjectURL(blob),a=document.createElement('a');
   a.href=url; a.download=`Anamnese_Ortopedia_${data.replace(/\//g,'-')}.txt`; a.click();
   URL.revokeObjectURL(url); mostrarToast('Anamnese salva com sucesso!');
 }
+
 function mostrarToast(msg,ms=2800){
   const t=document.getElementById('toast');
   t.textContent=msg; t.classList.add('show');
   setTimeout(()=>t.classList.remove('show'),ms);
 }
 
-document.addEventListener('DOMContentLoaded', function(){
-
+/* ── INIT ── */
+function inicializarApp(){
   popularChips('cp-qp',CS.qp,'qp');
   popularChips('cp-hma',CS.hma,'hma');
   popularChips('cp-hpp',CS.hpp,'hpp');
@@ -2086,8 +2244,12 @@ document.addEventListener('DOMContentLoaded', function(){
   document.getElementById('tb-anam').addEventListener('click',()=>showTab('anam'));
   document.getElementById('tb-class').addEventListener('click',()=>showTab('class'));
   selectRegion('geral');
-  restoreImages();
+  if(!fbConfigured) restoreImages();
   showTab('anam');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  if(!fbConfigured) inicializarApp();
 });
 </script>
 </body>
