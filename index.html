@@ -2,6 +2,8 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8"/>
+  <meta http-equiv="X-Content-Type-Options" content="nosniff"/>
+  <meta name="referrer" content="strict-origin-when-cross-origin"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Anamnese — Ortopedia e Traumatologia</title>
 <style>
@@ -2100,14 +2102,46 @@ function triggerUpload(id){
   document.getElementById('file-'+id).click();
 }
 
+const _uploadTimes = {};
 function loadImg(id, input){
   const file = input.files[0];
   if(!file) return;
-  // Resize/compress before saving
+
+  // Rate limiting: max 5 uploads por minuto por usuário
+  const now = Date.now();
+  const uid = currentUser ? currentUser.uid : 'offline';
+  if(!_uploadTimes[uid]) _uploadTimes[uid] = [];
+  _uploadTimes[uid] = _uploadTimes[uid].filter(t => now - t < 60000);
+  if(_uploadTimes[uid].length >= 5){
+    mostrarToast('Aguarde 1 minuto para enviar mais imagens.');
+    input.value = '';
+    return;
+  }
+  _uploadTimes[uid].push(now);
+
+  // Validação de tipo
+  const allowedTypes = ['image/jpeg','image/png','image/webp','image/gif'];
+  if(!allowedTypes.includes(file.type)){
+    mostrarToast('Formato inválido. Use JPEG, PNG ou WebP.');
+    input.value = '';
+    return;
+  }
+
+  // Validação de tamanho (máx 10MB antes de comprimir)
+  if(file.size > 10 * 1024 * 1024){
+    mostrarToast('Imagem muito grande. Máximo: 10MB.');
+    input.value = '';
+    return;
+  }
+
   const reader = new FileReader();
   reader.onload = e => {
-    const original = e.target.result;
-    comprimirImagem(original, 900, (compressed) => {
+    comprimirImagem(e.target.result, 900, (compressed) => {
+      // Validação pós-compressão (~900KB max base64)
+      if(compressed.length > 1200000){
+        mostrarToast('Imagem ainda grande após compressão. Tente outra.');
+        return;
+      }
       exibirImagem(id, compressed);
       salvarImagemUsuario(id, compressed);
     });
@@ -2249,8 +2283,4 @@ function inicializarApp(){
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  if(!fbConfigured) inicializarApp();
-});
-</script>
-</body>
-</html>
+  if(!fbConfigured
